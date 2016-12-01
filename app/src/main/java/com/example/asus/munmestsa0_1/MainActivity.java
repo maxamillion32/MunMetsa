@@ -1,5 +1,6 @@
 package com.example.asus.munmestsa0_1;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.MenuItemHoverListener;
@@ -31,10 +32,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int res_id = item.getItemId();
         if(res_id==R.id.action_add){
+            Intent intent = new Intent(this, MetsaAddActivity.class);
+            startActivity(intent);
+
             Toast.makeText(getApplicationContext(), "Painoit addia", Toast.LENGTH_LONG).show();
+        }else if(res_id==R.id.menu_main){
+
         }
         return true;
     }
