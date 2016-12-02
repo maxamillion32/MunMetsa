@@ -1,5 +1,7 @@
 package com.example.asus.munmestsa0_1.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,29 +11,35 @@ import java.util.List;
 
 public class Metsa {
 
-    private int id;
+    private String id;
     private String title;
     private String description;
     private int size;
     private Date date;
 
+
+
+    private LatLng latLng;
+
     private List<Note> notes;
     private List<Receipt> receipts;
 
-    private int longitude;
-    private int latitude;
 
-    public Metsa(Date date, String description, int id, int latitude, int longitude, List<Note> notes, List<Receipt> receipts, int size, String title) {
+    public Metsa() {
+
+    }
+
+    public Metsa(Date date, String description, String id, LatLng latLng, List<Note> notes, List<Receipt> receipts, int size, String title) {
         this.date = date;
         this.description = description;
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latLng = latLng;
         this.notes = notes;
         this.receipts = receipts;
         this.size = size;
         this.title = title;
     }
+
 
     public Date getDate() {
         return date;
@@ -49,28 +57,20 @@ public class Metsa {
         this.description = description;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getLatitude() {
-        return latitude;
+    public LatLng getLatLng() {
+        return latLng;
     }
 
-    public void setLatitude(int latitude) {
-        this.latitude = latitude;
-    }
-
-    public int getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(int longitude) {
-        this.longitude = longitude;
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
     }
 
     public List<Note> getNotes() {

@@ -4,20 +4,44 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="Name"
             android:ems="10"
-            android:id="@+id/TFaddress" />
+            android:id="@+id/fTitle"
+            android:hint="Nimi"
+            android:layout_margin="5dp" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/fSize"
+            android:hint="Koko (ha)"
+            android:layout_margin="5dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/TFaddress"
+            android:hint="Osoite"
+            android:layout_margin="5dp" />
+
         <Button
             android:text="Etsi"
             android:layout_width="match_parent"
@@ -28,6 +52,15 @@
             android:onClick="onSearch" />
 
     </LinearLayout>
+    <Button
+        android:text="Valmis!"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Bready"
+        android:elevation="0dp"
+        android:layout_gravity="right"
+        android:onClick="metsaReady" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,8 +90,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/TVlatitude" />
 
-
     </LinearLayout>
+
+
 
 
     <fragment
