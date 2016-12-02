@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.asus.munmestsa0_1.DB.DatabaseHelper;
 import com.example.asus.munmestsa0_1.model.Metsa;
 import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +34,8 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
     private FirebaseDatabase database;
     private DatabaseReference metsat;
 
+    private DatabaseHelper myDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,8 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        myDb = new DatabaseHelper(this);
 
         database = FirebaseDatabase.getInstance();
         metsat = database.getReference();
@@ -125,6 +130,8 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
         metsa.setId(key);
 
         metsat.child("metsat").child(key).setValue(metsa);
+
+        boolean isInserted =  myDb.insertData(metsa.getId());
 
         Toast.makeText(getApplicationContext(), "Metsä lisätty avaimella " + metsa.getId(), Toast.LENGTH_LONG).show();
 
