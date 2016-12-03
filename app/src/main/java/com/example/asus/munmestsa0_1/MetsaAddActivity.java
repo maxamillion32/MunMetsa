@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.example.asus.munmestsa0_1.DB.DatabaseHelper;
 import com.example.asus.munmestsa0_1.model.Metsa;
+import com.example.asus.munmestsa0_1.model.Note;
+import com.example.asus.munmestsa0_1.model.Receipt;
 import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +26,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -49,6 +53,7 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
 
         database = FirebaseDatabase.getInstance();
         metsat = database.getReference();
+        metsa= new Metsa();
     }
 
 
@@ -63,7 +68,7 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        metsa= new Metsa();
+
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -84,7 +89,8 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             public void onMapClick(LatLng latLng) {
                 mMap.clear();
-                metsa.setLatLng(latLng);
+                metsa.setLatitude(latLng.latitude);
+                metsa.setLongitude(latLng.longitude);
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Koodinaatit"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
             }
@@ -125,6 +131,14 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
 
         metsa.setTitle(title.getText().toString());
         metsa.setSize(Integer.parseInt(size.getText().toString()));
+        if(metsa.getLatitude()==0){
+            metsa.setLatitude(0);
+            metsa.setLongitude(0);
+        }
+        metsa.setDate(new Date());
+        metsa.setDescription("-");
+        metsa.setNotes(new ArrayList<Note>());
+        metsa.setReceipts(new ArrayList<Receipt>());
 
         String key = metsat.child("metsat").push().getKey();
         metsa.setId(key);

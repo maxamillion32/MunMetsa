@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import com.example.asus.munmestsa0_1.DB.DatabaseHelper;
 import com.example.asus.munmestsa0_1.model.Metsa;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -24,43 +27,48 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private FirebaseDatabase database;
-    private DatabaseReference metsat;
+    private DatabaseReference fbRef;
 
-    private DatabaseHelper myDb;
+    private DatabaseHelper localDB;
+
+    private ArrayList<Metsa> munMetsat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        database = FirebaseDatabase.getInstance();
-        metsat = database.getReference();
+        munMetsat = new ArrayList<>();
 
-        myDb = new DatabaseHelper(this);
+        database = FirebaseDatabase.getInstance();
+        fbRef = database.getReference("metsat");
+        localDB = new DatabaseHelper(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        viewAll();
 
+
+
+        fbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Cursor res = localDB.getAllData();if(res.getCount() == 0){return;}
+
+                while(res.moveToNext()){
+                    String metsaId = res.getString(1);
+                    Metsa m = dataSnapshot.child(metsaId).getValue(Metsa.class);
+                    munMetsat.add(m);
+                    Toast.makeText(getApplicationContext(), "uh  " + m.getTitle(), Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    public void viewAll(){
-        Cursor res = myDb.getAllData();
-        if(res.getCount() == 0){
-            return;
-        }
-        ArrayList<String> keys = new ArrayList<>();
-        ArrayList<Metsa> metsat = new ArrayList<>();
-
-        while(res.moveToNext()){
-            int id = Integer.parseInt(res.getString(0));
-            String metsaId = res.getString(1);
-            keys.add(metsaId);
-            metsat.add(metsat.get());
-            //Toast.makeText(getApplicationContext(), metsaId, Toast.LENGTH_LONG).show();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

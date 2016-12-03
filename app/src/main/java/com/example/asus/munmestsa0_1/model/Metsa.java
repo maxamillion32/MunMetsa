@@ -17,9 +17,8 @@ public class Metsa {
     private int size;
     private Date date;
 
-
-
-    private LatLng latLng;
+    private double latitude;
+    private double longitude;
 
     private List<Note> notes;
     private List<Receipt> receipts;
@@ -29,11 +28,12 @@ public class Metsa {
 
     }
 
-    public Metsa(Date date, String description, String id, LatLng latLng, List<Note> notes, List<Receipt> receipts, int size, String title) {
+    public Metsa(Date date, String description, String id, double latitude, double longitude, List<Note> notes, List<Receipt> receipts, int size, String title) {
         this.date = date;
         this.description = description;
         this.id = id;
-        this.latLng = latLng;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.notes = notes;
         this.receipts = receipts;
         this.size = size;
@@ -65,12 +65,20 @@ public class Metsa {
         this.id = id;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public List<Note> getNotes() {
