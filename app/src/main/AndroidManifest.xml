@@ -41,7 +41,7 @@
 
         <activity
             android:name=".MetsaAddActivity"
-            android:label="@string/title_activity_metsa_add"></activity>
+            android:label="@string/title_activity_metsa_add" />
     </application>
 
 </manifest>
