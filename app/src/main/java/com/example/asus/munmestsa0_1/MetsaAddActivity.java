@@ -149,7 +149,7 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
 
         Toast.makeText(getApplicationContext(), "Metsä lisätty avaimella " + metsa.getId(), Toast.LENGTH_LONG).show();
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainController.class);
         startActivity(intent);
     }
 

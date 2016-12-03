@@ -3,22 +3,20 @@ package com.example.asus.munmestsa0_1;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.ListViewCompat;
-import android.support.v7.widget.MenuItemHoverListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +43,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainController extends AppCompatActivity implements OnMapReadyCallback {
 
+    private GoogleMap mMap;
+    private SupportMapFragment mapFragment;
 
     Toolbar toolbar;
     TabLayout tabLayout;
@@ -69,9 +69,11 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
+        setContentView(R.layout.activity_main_controller);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity{
         viewPagerAdapter.addFragments(new ThreeFragment(), "Three");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
 
         munMetsat = new ArrayList<>();
         currentMetsa = null;
@@ -111,14 +114,44 @@ public class MainActivity extends AppCompatActivity{
                 currentMetsa = munMetsat.get(0);
                 showMetsa(currentMetsa);
                 listItems();
-
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageSelected(int position) {
+                if(position==0){
+                    showMap(true);
+                }else{
+                    showMap(false);
+                }
             }
         });
     }
+
+    public void showMap(boolean t){
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        if(t){
+            params.height = ViewPager.LayoutParams.MATCH_PARENT;
+        }else{
+            params.height = 0;
+        }
+        mapFragment.getView().setLayoutParams(params);
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
     public void showMetsa(Metsa m){
 
     }
@@ -167,6 +200,5 @@ public class MainActivity extends AppCompatActivity{
         String metsaName = ((TextView)v.findViewById(R.id.child_item)).getText().toString();
         Toast.makeText(getApplicationContext(), "Painoit mettaa " + metsaName, Toast.LENGTH_LONG).show();
     }
-
 
 }
