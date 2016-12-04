@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.asus.munmestsa0_1.R;
+import com.example.asus.munmestsa0_1.model.Metsa;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +25,13 @@ public class MetsaAdapter extends BaseExpandableListAdapter{
     private List<String> header_titles;
     private HashMap<String,List<String>> child_titles;
     private Context ctx;
+    HashMap<String, Metsa> metsaMap;
 
-    public MetsaAdapter(Context ctx, List<String> header_titles, HashMap<String,List<String>> child_titles){
+    public MetsaAdapter(Context ctx, List<String> header_titles, HashMap<String,List<String>> child_titles, HashMap<String, Metsa> metsaMap){
         this.ctx = ctx;
         this.child_titles = child_titles;
         this.header_titles = header_titles;
+        this.metsaMap = metsaMap;
     }
 
     @Override
@@ -69,7 +72,6 @@ public class MetsaAdapter extends BaseExpandableListAdapter{
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         String title = (String) this.getGroup(i);
-        Log.d("myTag", "GTITLE: " + title);
         if(view == null){
             LayoutInflater layoutInflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.metsa_list_parent,null);
@@ -85,7 +87,6 @@ public class MetsaAdapter extends BaseExpandableListAdapter{
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
         String title = (String) this.getChild(i,i1);
-        Log.d("myTag", "TITLE: " + title);
         if(view == null){
             LayoutInflater layoutInflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.metsa_list_child,null);

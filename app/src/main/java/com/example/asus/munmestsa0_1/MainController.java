@@ -1,8 +1,10 @@
 package com.example.asus.munmestsa0_1;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -58,8 +60,8 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
 
     private DatabaseHelper localDB;
 
-    private ArrayList<Metsa> munMetsat;
-    private HashMap<String, List<String>> metsaMap;
+    private HashMap<String, Metsa> metsaMap;
+    private HashMap<String, List<String>> metsaKeyMap;
 
     private ExpandableListView expandableListView;
 
@@ -80,14 +82,12 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragments(new HomeFragment(), "Home");
-        viewPagerAdapter.addFragments(new TwoFragment(), "Two");
-        viewPagerAdapter.addFragments(new ThreeFragment(), "Three");
+        viewPagerAdapter.addFragments(new HomeFragment(), "Home");viewPagerAdapter.addFragments(new TwoFragment(), "Two");viewPagerAdapter.addFragments(new ThreeFragment(), "Three");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
 
-        munMetsat = new ArrayList<>();
+        metsaMap = new HashMap<>();
         currentMetsa = null;
 
         expandableListView = (ExpandableListView) findViewById(R.id.metsaList);
@@ -96,46 +96,56 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         fbRef = database.getReference("metsat");
         localDB = new DatabaseHelper(this);
 
-        metsaMap = new HashMap<>();
+        metsaKeyMap = new HashMap<>();
 
-        listItems();
+
 
 
         fbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Cursor res = localDB.getAllData();if(res.getCount() == 0){return;}
-
-                while(res.moveToNext()){
-                    String metsaId = res.getString(1);
-                    Metsa m = dataSnapshot.child(metsaId).getValue(Metsa.class);
-                    munMetsat.add(m);
+                Cursor res = localDB.getAllData();
+                if (res.getCount() == 0) {
+                    return;
                 }
-                currentMetsa = munMetsat.get(0);
-                showMetsa(currentMetsa);
-                listItems();
+                String metsaId = null;
+                Metsa m = null;
+                while (res.moveToNext()) {
+                    metsaId = res.getString(1);
+                    m = dataSnapshot.child(metsaId).getValue(Metsa.class);
+                    metsaMap.put(m.getTitle(), m);
+                }
+                currentMetsa = metsaMap.get(m.getTitle());
+                refresh();
             }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrollStateChanged(int state) {}
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrollStateChanged(int state) {
+            }
+
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
             public void onPageSelected(int position) {
-                if(position==0){
+                if (position == 0) {
                     showMap(true);
-                }else{
+                } else {
                     showMap(false);
                 }
             }
         });
+
     }
 
-    public void showMap(boolean t){
+    public void showMap(boolean t) {
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
-        if(t){
+        if (t) {
             params.height = ViewPager.LayoutParams.MATCH_PARENT;
-        }else{
+        } else {
             params.height = 0;
         }
         mapFragment.getView().setLayoutParams(params);
@@ -147,29 +157,25 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
-    public void showMetsa(Metsa m){
-
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
     }
 
     public void listItems(){
         ArrayList<String> titles = new ArrayList<>();
-        for(Metsa s : this.munMetsat){
-            titles.add(s.getTitle());
-
+        for(Metsa s : this.metsaMap.values()){
+            if(s.getTitle()!=currentMetsa.getTitle())
+                titles.add(s.getTitle());
         }
-        Log.d("myTag", "MUNKKI");
-        metsaMap.put("Näytä metsät", titles);
+        metsaKeyMap.put(currentMetsa.getTitle(), titles);
 
-        //listAdapter = new ArrayAdapter<Metsa>(this,android.R.layout.simple_list_item_1, munMetsat);
-        //metsaList.setAdapter(listAdapter);
         ArrayList<String> t = new ArrayList<>();
-        t.add("Näytä metsät");
-        ExpandableListAdapter metsaAdapter = new MetsaAdapter(this, t,metsaMap);
+        t.add(currentMetsa.getTitle());
+        ExpandableListAdapter metsaAdapter = new MetsaAdapter(this, t,metsaKeyMap, metsaMap);
         expandableListView.setAdapter(metsaAdapter);
     }
 
@@ -189,16 +195,24 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
             Intent intent = new Intent(this, MetsaAddActivity.class);
             startActivity(intent);
 
-            Toast.makeText(getApplicationContext(), "Painoit addia", Toast.LENGTH_LONG).show();
         }else if(res_id==R.id.menu_main){
 
         }
         return true;
     }
+    public void refresh(){
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentMetsa.getLatitude(), currentMetsa.getLongitude()), 15));
+        listItems();
+    }
 
     public void childClicked(View v){
-        String metsaName = ((TextView)v.findViewById(R.id.child_item)).getText().toString();
-        Toast.makeText(getApplicationContext(), "Painoit mettaa " + metsaName, Toast.LENGTH_LONG).show();
+        String title = ((TextView)v.findViewById(R.id.child_item)).getText().toString();
+        currentMetsa = metsaMap.get(title);
+        refresh();
+        Toast.makeText(getApplicationContext(),title + " valittu", Toast.LENGTH_SHORT).show();
+    }
+    public void removeCurrent(View v){
+
     }
 
 }

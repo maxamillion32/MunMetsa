@@ -81,9 +81,7 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
             return;
         }
         mMap.setMyLocationEnabled(true);
-
         mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-
         mMap.animateCamera(CameraUpdateFactory.zoomTo(4));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -125,32 +123,33 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
-    public void metsaReady(View view){
+    public void metsaReady(View view) {
         EditText title = (EditText) findViewById(R.id.fTitle);
         EditText size = (EditText) findViewById(R.id.fSize);
 
-        metsa.setTitle(title.getText().toString());
-        metsa.setSize(Integer.parseInt(size.getText().toString()));
-        if(metsa.getLatitude()==0){
-            metsa.setLatitude(0);
-            metsa.setLongitude(0);
+
+        if (metsa.getLatitude() != 0 && !title.getText().toString().matches("") && size.getText().toString().trim().length() > 0) {
+            metsa.setTitle(title.getText().toString());
+            metsa.setSize(Integer.parseInt(size.getText().toString()));
+            metsa.setDate(new Date());
+            metsa.setDescription("-");
+            metsa.setNotes(new ArrayList<Note>());
+            metsa.setReceipts(new ArrayList<Receipt>());
+
+            String key = metsat.child("metsat").push().getKey();
+            metsa.setId(key);
+
+            metsat.child("metsat").child(key).setValue(metsa);
+
+            boolean isInserted = myDb.insertData(metsa.getId());
+
+            Toast.makeText(getApplicationContext(), "Metsä lisätty avaimella " + metsa.getId(), Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(this, MainController.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(getApplicationContext(), "Täytä nimi ja koko kenttä sekä valitse kartalta sijainti. ", Toast.LENGTH_LONG).show();
         }
-        metsa.setDate(new Date());
-        metsa.setDescription("-");
-        metsa.setNotes(new ArrayList<Note>());
-        metsa.setReceipts(new ArrayList<Receipt>());
-
-        String key = metsat.child("metsat").push().getKey();
-        metsa.setId(key);
-
-        metsat.child("metsat").child(key).setValue(metsa);
-
-        boolean isInserted =  myDb.insertData(metsa.getId());
-
-        Toast.makeText(getApplicationContext(), "Metsä lisätty avaimella " + metsa.getId(), Toast.LENGTH_LONG).show();
-
-        Intent intent = new Intent(this, MainController.class);
-        startActivity(intent);
     }
 
 }
