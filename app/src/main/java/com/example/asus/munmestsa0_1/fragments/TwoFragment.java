@@ -42,7 +42,7 @@ public class TwoFragment extends Fragment {
         // Inflate the layout for this fragment
         fView = inflater.inflate(R.layout.fragment_two, container, false);
         listView = (ListView) fView.findViewById(R.id.noteView);
-        emptyNote = (TextView) fView.findViewById(R.id.emptyNoteText);
+        //emptyNote = (TextView) fView.findViewById(R.id.emptyNoteText);
 
        return fView;
     }
@@ -55,7 +55,7 @@ public class TwoFragment extends Fragment {
     public void viewNotes(ArrayList<Note> notes){
 
         if(listView!=null) {
-            emptyNote.setText("");
+            //emptyNote.setText("");
             ListAdapter noteAdapter = new CustomNoteAdapter(this.getContext(), notes);
             listView.setAdapter(noteAdapter);
         }

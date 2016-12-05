@@ -2,20 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="#1a1919">
+    android:background="@color/colorPrimaryDark">
 
     <TextView
         android:id="@+id/heading_item"
-        android:layout_width="match_parent"
+        android:layout_width="187dp"
         android:layout_height="match_parent"
         android:text="Hello world"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textColor="#d7cece"
         android:gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:paddingLeft="13dp"
         android:paddingRight="13dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp" />
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp" />
 
 </LinearLayout>

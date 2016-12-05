@@ -90,9 +90,9 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragments(homeFragment, "Home");
-        viewPagerAdapter.addFragments(noteFragment, "Two");
-        viewPagerAdapter.addFragments(receiptFragment, "Three");
+        viewPagerAdapter.addFragments(homeFragment, "Kartta");
+        viewPagerAdapter.addFragments(noteFragment, "Muistio");
+        viewPagerAdapter.addFragments(receiptFragment, "Kuitit");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -226,6 +226,7 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         currentMetsa = metsaMap.get(title);
         refresh();
         Toast.makeText(getApplicationContext(),title + " valittu", Toast.LENGTH_SHORT).show();
+        viewNotes();
     }
 
     public void removeCurrent(View v){
