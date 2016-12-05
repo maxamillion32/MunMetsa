@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -133,8 +134,8 @@ public class MetsaAddActivity extends FragmentActivity implements OnMapReadyCall
             metsa.setSize(Integer.parseInt(size.getText().toString()));
             metsa.setDate(new Date());
             metsa.setDescription("-");
-            metsa.setNotes(new ArrayList<Note>());
-            metsa.setReceipts(new ArrayList<Receipt>());
+            metsa.setNotes(new HashMap<String, Note>());
+            metsa.setReceipts(new HashMap<String, Receipt>());
 
             String key = metsat.child("metsat").push().getKey();
             metsa.setId(key);

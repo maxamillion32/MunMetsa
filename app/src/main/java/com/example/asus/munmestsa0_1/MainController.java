@@ -1,5 +1,6 @@
 package com.example.asus.munmestsa0_1;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,19 +18,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.asus.munmestsa0_1.DB.DatabaseHelper;
+import com.example.asus.munmestsa0_1.adapter.CustomNoteAdapter;
 import com.example.asus.munmestsa0_1.adapter.MetsaAdapter;
 import com.example.asus.munmestsa0_1.adapter.ViewPagerAdapter;
 import com.example.asus.munmestsa0_1.fragments.HomeFragment;
 import com.example.asus.munmestsa0_1.fragments.ThreeFragment;
 import com.example.asus.munmestsa0_1.fragments.TwoFragment;
 import com.example.asus.munmestsa0_1.model.Metsa;
+import com.example.asus.munmestsa0_1.model.Note;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,6 +49,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,24 +57,21 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
 
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
-
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
-
     private FirebaseDatabase database;
-    private DatabaseReference fbRef;
-
     private DatabaseHelper localDB;
-
     private HashMap<String, Metsa> metsaMap;
     private HashMap<String, List<String>> metsaKeyMap;
-
     private ExpandableListView expandableListView;
-
     private Metsa currentMetsa;
+    private HashMap<String, DatabaseReference> FBreferences;
 
+    private HomeFragment homeFragment;
+    private TwoFragment noteFragment;
+    private ThreeFragment receiptFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +85,14 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+        homeFragment = new HomeFragment();noteFragment = new TwoFragment();receiptFragment = new ThreeFragment();
+
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragments(new HomeFragment(), "Home");viewPagerAdapter.addFragments(new TwoFragment(), "Two");viewPagerAdapter.addFragments(new ThreeFragment(), "Three");
+        viewPagerAdapter.addFragments(homeFragment, "Home");
+        viewPagerAdapter.addFragments(noteFragment, "Two");
+        viewPagerAdapter.addFragments(receiptFragment, "Three");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -93,36 +103,33 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         expandableListView = (ExpandableListView) findViewById(R.id.metsaList);
 
         database = FirebaseDatabase.getInstance();
-        fbRef = database.getReference("metsat");
         localDB = new DatabaseHelper(this);
 
         metsaKeyMap = new HashMap<>();
 
+        FBreferences = new HashMap<>();
+        Cursor res = localDB.getAllData();
+        if (res.getCount() == 0) {return;}
+        while (res.moveToNext()) {
+            FBreferences.put(res.getString(1), database.getReference("metsat/"+res.getString(1)));
+        }
 
-
-
-        fbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Cursor res = localDB.getAllData();
-                if (res.getCount() == 0) {
-                    return;
-                }
-                String metsaId = null;
-                Metsa m = null;
-                while (res.moveToNext()) {
-                    metsaId = res.getString(1);
-                    m = dataSnapshot.child(metsaId).getValue(Metsa.class);
+        for(DatabaseReference r : FBreferences.values()){
+            r.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Metsa m = dataSnapshot.getValue(Metsa.class);
                     metsaMap.put(m.getTitle(), m);
+                    currentMetsa = m;
+                    refresh();
                 }
-                currentMetsa = metsaMap.get(m.getTitle());
-                refresh();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {
             }
@@ -150,7 +157,6 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }
         mapFragment.getView().setLayoutParams(params);
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -200,9 +206,19 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }
         return true;
     }
+
     public void refresh(){
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentMetsa.getLatitude(), currentMetsa.getLongitude()), 15));
         listItems();
+        viewNotes();
+    }
+    public void viewNotes(){
+       if(currentMetsa.getNotes()!=null) {
+           ArrayList l = new ArrayList<Note>(currentMetsa.getNotes().values());
+           noteFragment.viewNotes(l);
+        }else{
+           noteFragment.notesEmpty();
+       }
     }
 
     public void childClicked(View v){
@@ -211,7 +227,23 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         refresh();
         Toast.makeText(getApplicationContext(),title + " valittu", Toast.LENGTH_SHORT).show();
     }
+
     public void removeCurrent(View v){
+    }
+
+    public void addNote(View v){
+        EditText noteText = (EditText) findViewById(R.id.noteText);
+        if(noteText.getText().toString().length()>1){
+
+            String key = FBreferences.get(currentMetsa.getId()).child("notes").push().getKey();
+            Note newNote = new Note(noteText.getText().toString(), new Date(), key, currentMetsa.getId(), "Default");
+
+            FBreferences.get(currentMetsa.getId()).child("notes").child(key).setValue(newNote);
+            Toast.makeText(getApplicationContext(), "Merkintä lisätty.", Toast.LENGTH_LONG).show();
+            noteText.setText("");
+        }else {
+            Toast.makeText(getApplicationContext(), "Et voi lisätä alle 2 merkkiä pitkää merkintää.", Toast.LENGTH_LONG).show();
+        }
 
     }
 

@@ -8,14 +8,18 @@ import java.util.Date;
 
 public class Note {
 
-    private int id;
-    private int metsaId;
+    private String id;
+    private String metsaId;
 
     private String content;
     private Date date;
     private String poster;
 
-    public Note(String content, Date date, int id, int metsaId, String poster) {
+    public Note() {
+
+    }
+
+    public Note(String content, Date date, String id, String metsaId, String poster) {
         this.content = content;
         this.date = date;
         this.id = id;
@@ -39,20 +43,20 @@ public class Note {
         this.date = date;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getMetsaId() {
+    public String getMetsaId() {
         return metsaId;
     }
 
-    public void setMetsaId(int metsaId) {
+    public void setMetsaId(String metsaId) {
         this.metsaId = metsaId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPoster() {

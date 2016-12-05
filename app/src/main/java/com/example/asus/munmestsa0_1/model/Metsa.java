@@ -3,6 +3,7 @@ package com.example.asus.munmestsa0_1.model;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,15 +21,15 @@ public class Metsa {
     private double latitude;
     private double longitude;
 
-    private List<Note> notes;
-    private List<Receipt> receipts;
+    private HashMap<String, Note> notes;
+    private HashMap<String, Receipt> receipts;
 
 
     public Metsa() {
 
     }
 
-    public Metsa(Date date, String description, String id, double latitude, double longitude, List<Note> notes, List<Receipt> receipts, int size, String title) {
+    public Metsa(Date date, String description, String id, double latitude, double longitude, HashMap<String, Note> notes, HashMap<String, Receipt> receipts, int size, String title) {
         this.date = date;
         this.description = description;
         this.id = id;
@@ -81,19 +82,19 @@ public class Metsa {
         this.latitude = latitude;
     }
 
-    public List<Note> getNotes() {
+    public HashMap<String, Note> getNotes() {
         return notes;
     }
 
-    public void setNotes(List<Note> notes) {
+    public void setNotes(HashMap<String, Note> notes) {
         this.notes = notes;
     }
 
-    public List<Receipt> getReceipts() {
+    public HashMap<String, Receipt> getReceipts() {
         return receipts;
     }
 
-    public void setReceipts(List<Receipt> receipts) {
+    public void setReceipts(HashMap<String, Receipt> receipts) {
         this.receipts = receipts;
     }
 

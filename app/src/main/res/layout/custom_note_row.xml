@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#dac9c9">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Nlaa tafasdasd af fsddgd laa tafasdasd af fsddgd laa tafasdasd af fsddgd laa tafasdasd af fsddgd laa tafasdasd af fsddgd "
+        android:id="@+id/noteTextView"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12.22.2016"
+        android:id="@+id/noteDate"
+        android:layout_marginLeft="10dp"
+        android:textStyle="italic"
+        android:layout_weight="0.06"/>
+
+</LinearLayout>
