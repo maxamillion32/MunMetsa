@@ -20,6 +20,7 @@ import com.example.asus.munmestsa0_1.adapter.CustomNoteAdapter;
 import com.example.asus.munmestsa0_1.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class TwoFragment extends Fragment {
@@ -42,7 +43,7 @@ public class TwoFragment extends Fragment {
         // Inflate the layout for this fragment
         fView = inflater.inflate(R.layout.fragment_two, container, false);
         listView = (ListView) fView.findViewById(R.id.noteView);
-        //emptyNote = (TextView) fView.findViewById(R.id.emptyNoteText);
+        emptyNote = (TextView) fView.findViewById(R.id.emptyNoteText);
 
        return fView;
     }
@@ -52,21 +53,19 @@ public class TwoFragment extends Fragment {
 
     }
 
-    public void viewNotes(ArrayList<Note> notes){
+    public void viewNotes(ArrayList<Note> notes) {
+        if (notes != null){
+            if (listView != null) {
 
-        if(listView!=null) {
-            //emptyNote.setText("");
-            ListAdapter noteAdapter = new CustomNoteAdapter(this.getContext(), notes);
-            listView.setAdapter(noteAdapter);
+                //emptyNote.setText("");
+                Collections.sort(notes);
+                ListAdapter noteAdapter = new CustomNoteAdapter(this.getContext(), notes);
+                listView.setAdapter(noteAdapter);
+                listView.setSelection(noteAdapter.getCount() - 1);
+            }
+        }else{
+            //emptyNote.setText("Tyhja");
         }
     }
-    public void notesEmpty(){
-
-    }
-
-
-
-
-
 
 }

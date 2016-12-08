@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:paddingLeft="1dp"
+    android:paddingRight="5dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -21,6 +23,19 @@
         android:id="@+id/noteDate"
         android:layout_marginLeft="10dp"
         android:textStyle="italic"
-        android:layout_weight="0.06"/>
+        android:layout_weight="0.06"
+        android:gravity="right"
+        android:layout_gravity="right" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default"
+        android:id="@+id/noteSender"
+        android:layout_marginLeft="10dp"
+        android:textStyle="italic"
+        android:layout_weight="0.06"
+        android:gravity="right"
+        android:layout_gravity="right" />
+
 
 </LinearLayout>

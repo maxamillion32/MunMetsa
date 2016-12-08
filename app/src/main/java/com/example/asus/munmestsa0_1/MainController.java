@@ -200,9 +200,9 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         if(res_id==R.id.action_add){
             Intent intent = new Intent(this, MetsaAddActivity.class);
             startActivity(intent);
-
-        }else if(res_id==R.id.menu_main){
-
+        }else if(res_id==R.id.menu_settings){
+            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);
         }
         return true;
     }
@@ -213,12 +213,11 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         viewNotes();
     }
     public void viewNotes(){
-       if(currentMetsa.getNotes()!=null) {
-           ArrayList l = new ArrayList<Note>(currentMetsa.getNotes().values());
-           noteFragment.viewNotes(l);
-        }else{
-           noteFragment.notesEmpty();
-       }
+        ArrayList l = null;
+        if(currentMetsa.getNotes()!=null)
+            l = new ArrayList<Note>(currentMetsa.getNotes().values());
+
+        noteFragment.viewNotes(l);
     }
 
     public void childClicked(View v){

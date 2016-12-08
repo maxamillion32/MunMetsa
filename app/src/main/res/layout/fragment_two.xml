@@ -17,10 +17,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:id="@+id/noteView"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_marginBottom="55dp" />
 
 
     </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Fragment three"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:id="@+id/emptyNoteText"
+        />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -38,8 +49,10 @@
             android:hint="Kirjoita merkintä"
             android:layout_gravity="bottom" />
 
+
+
         <Button
-            android:text="Button"
+            android:text="Lähetä"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button3"

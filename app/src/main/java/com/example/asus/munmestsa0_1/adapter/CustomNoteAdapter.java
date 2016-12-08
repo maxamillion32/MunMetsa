@@ -12,7 +12,10 @@ import android.widget.Toast;
 import com.example.asus.munmestsa0_1.R;
 import com.example.asus.munmestsa0_1.model.Note;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.SimpleTimeZone;
 
 import static android.content.ContentValues.TAG;
 
@@ -36,9 +39,12 @@ public class CustomNoteAdapter extends ArrayAdapter {
         Note singleItem = (Note) getItem(position);
         TextView contentText = (TextView) customView.findViewById(R.id.noteTextView);
         TextView dateText = (TextView) customView.findViewById(R.id.noteDate);
+        TextView senderText = (TextView) customView.findViewById(R.id.noteSender);
+        String date = new SimpleDateFormat("dd-MM-yyyy").format(singleItem.getDate());
 
         contentText.setText(singleItem.getContent());
-        dateText.setText(singleItem.getDate().toString());
+        dateText.setText(date);
+        senderText.setText(singleItem.getPoster());
         return customView;
     }
 }

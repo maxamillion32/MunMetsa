@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by Asus on 1.12.2016.
  */
 
-public class Note {
+public class Note implements Comparable<Note>{
 
     private String id;
     private String metsaId;
@@ -65,5 +65,10 @@ public class Note {
 
     public void setPoster(String poster) {
         this.poster = poster;
+    }
+
+    @Override
+    public int compareTo(Note note) {
+        return getDate().compareTo(note.getDate());
     }
 }

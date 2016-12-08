@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Asus on 1.12.2016.
  */
 
-public class Metsa {
+public class Metsa implements Comparable<Metsa>{
 
     private String id;
     private String title;
@@ -25,7 +25,7 @@ public class Metsa {
     private HashMap<String, Receipt> receipts;
 
 
-    public Metsa() {
+    public Metsa(){
 
     }
 
@@ -119,5 +119,10 @@ public class Metsa {
         return "Metsa{" +
                 "title='" + title + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Metsa metsa) {
+        return getDate().compareTo(metsa.getDate());
     }
 }

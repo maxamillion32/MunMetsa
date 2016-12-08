@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/action_add"
-        android:title="Lisää metsä"
+        android:title="Luo uusi metsä"
         app:showAsAction="never"
 
         />
     <item
-        android:id="@+id/menu_main"
-        android:title="Menu"
+        android:id="@+id/menu_settings"
+        android:title="Asetukset"
         app:showAsAction="never"
         />
 
