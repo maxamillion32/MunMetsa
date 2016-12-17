@@ -1,9 +1,13 @@
 package com.example.asus.munmestsa0_1;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -36,18 +40,24 @@ import com.example.asus.munmestsa0_1.fragments.ThreeFragment;
 import com.example.asus.munmestsa0_1.fragments.TwoFragment;
 import com.example.asus.munmestsa0_1.model.Metsa;
 import com.example.asus.munmestsa0_1.model.Note;
+import com.example.asus.munmestsa0_1.model.Receipt;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,10 +78,15 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
     private ExpandableListView expandableListView;
     private Metsa currentMetsa;
     private HashMap<String, DatabaseReference> FBreferences;
-
+    private StorageReference mStorage;
+    private ProgressDialog mProgress;
     private HomeFragment homeFragment;
     private TwoFragment noteFragment;
     private ThreeFragment receiptFragment;
+
+    private String receiptKey;
+
+    static final int REQUEST_IMAGE_CAPTRUE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +122,8 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
 
         metsaKeyMap = new HashMap<>();
 
+        mStorage = FirebaseStorage.getInstance().getReference();
+        mProgress = new ProgressDialog(this);
         FBreferences = new HashMap<>();
         Cursor res = localDB.getAllData();
         if (res.getCount() == 0) {return;}
@@ -138,6 +155,8 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
             }
 
             public void onPageSelected(int position) {
+                viewReceipts();
+                viewNotes();
                 if (position == 0) {
                     showMap(true);
                 } else {
@@ -211,6 +230,7 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentMetsa.getLatitude(), currentMetsa.getLongitude()), 15));
         listItems();
         viewNotes();
+        viewReceipts();
     }
     public void viewNotes(){
         ArrayList l = null;
@@ -219,13 +239,20 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
 
         noteFragment.viewNotes(l);
     }
+    public void viewReceipts(){
+        ArrayList l = null;
+        if(currentMetsa.getReceipts()!=null)
+            l = new ArrayList<Receipt>(currentMetsa.getReceipts().values());
+
+        receiptFragment.viewReceipts(l);
+    }
 
     public void childClicked(View v){
         String title = ((TextView)v.findViewById(R.id.child_item)).getText().toString();
         currentMetsa = metsaMap.get(title);
         refresh();
         Toast.makeText(getApplicationContext(),title + " valittu", Toast.LENGTH_SHORT).show();
-        viewNotes();
+
     }
 
     public void removeCurrent(View v){
@@ -246,5 +273,46 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }
 
     }
+
+    public void addReceipt(View v){
+        EditText receiptText = (EditText) findViewById(R.id.receiptText);
+        EditText receiptPrice = (EditText) findViewById(R.id.receiptPrice);
+        EditText receiptTax = (EditText) findViewById(R.id.receiptTax);
+        if(receiptText.getText().toString().length()>1 && receiptPrice.getText().toString().length()>0 && receiptTax.getText().toString().length()>0){
+            receiptKey = FBreferences.get(currentMetsa.getId()).child("receipts").push().getKey();
+
+            Intent cIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cIntent, REQUEST_IMAGE_CAPTRUE);
+
+            Receipt newNote = new Receipt(new Date(), receiptText.getText().toString(),  receiptKey, currentMetsa.getId(), Integer.parseInt(receiptPrice.getText().toString()), Integer.parseInt(receiptTax.getText().toString()));
+            FBreferences.get(currentMetsa.getId()).child("receipts").child(receiptKey).setValue(newNote);
+            receiptText.setText("");
+            receiptPrice.setText("");
+            receiptTax.setText("24");
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_IMAGE_CAPTRUE && resultCode == RESULT_OK){
+            mProgress.setMessage("Ladataan kuvaa..");
+            mProgress.show();
+            Bundle extras = data.getExtras();
+            Bitmap photo = (Bitmap) extras.get("data");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.JPEG,100,baos);
+            byte[] bdata = baos.toByteArray();
+            StorageReference filepath = mStorage.child("Receipts").child(receiptKey);
+            UploadTask uploadTask = filepath.putBytes(bdata);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    mProgress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Kuitti lisätty", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
 
 }

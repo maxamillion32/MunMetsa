@@ -57,14 +57,18 @@ public class TwoFragment extends Fragment {
         if (notes != null){
             if (listView != null) {
 
-                //emptyNote.setText("");
+                emptyNote.setText("");
+                listView.setVisibility(View.VISIBLE);
                 Collections.sort(notes);
                 ListAdapter noteAdapter = new CustomNoteAdapter(this.getContext(), notes);
                 listView.setAdapter(noteAdapter);
                 listView.setSelection(noteAdapter.getCount() - 1);
             }
         }else{
-            //emptyNote.setText("Tyhja");
+            if(emptyNote!=null) {
+                emptyNote.setText("Ei merkintöjä");
+                listView.setVisibility(View.GONE);
+            }
         }
     }
 

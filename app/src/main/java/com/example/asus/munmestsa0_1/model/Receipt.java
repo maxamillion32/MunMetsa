@@ -6,10 +6,10 @@ import java.util.Date;
  * Created by Asus on 1.12.2016.
  */
 
-public class Receipt {
+public class Receipt implements Comparable<Receipt>{
 
-    private int id;
-    private int metsaId;
+    private String id;
+    private String metsaId;
 
     private String description;
     private Date date;
@@ -17,7 +17,10 @@ public class Receipt {
     private double price;
     private int taxRate;
 
-    public Receipt(Date date, String description, int id, int metsaId, double price, int taxRate) {
+    public Receipt() {
+    }
+
+    public Receipt(Date date, String description, String id, String metsaId, double price, int taxRate) {
         this.date = date;
         this.description = description;
         this.id = id;
@@ -42,20 +45,20 @@ public class Receipt {
         this.description = description;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getMetsaId() {
+    public String getMetsaId() {
         return metsaId;
     }
 
-    public void setMetsaId(int metsaId) {
+    public void setMetsaId(String metsaId) {
         this.metsaId = metsaId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public double getPrice() {
@@ -72,5 +75,10 @@ public class Receipt {
 
     public void setTaxRate(int taxRate) {
         this.taxRate = taxRate;
+    }
+
+    @Override
+    public int compareTo(Receipt receipt) {
+        return getDate().compareTo(receipt.getDate());
     }
 }
