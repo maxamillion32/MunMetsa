@@ -49,6 +49,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else
             return true;
     }
+    public boolean removeForest(String metsaId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_METSA_ID + " WHERE METSA_ID='"+metsaId+"'");
+        return true;
+    }
+
     public boolean insertUsername(String u){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -65,10 +71,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from " + TABLE_METSA_ID,null);
         return res;
     }
-    public Cursor getUsername(){
+    public String getUsername(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_USER,null);
-        return res;
+        if (res.getCount() == 0) {
+            return null;
+        }
+        String name = null;
+        while (res.moveToNext()) {
+           name = res.getString(1);
+        }
+        return name;
 
     }
     public Cursor getMetsa(String metsaName){

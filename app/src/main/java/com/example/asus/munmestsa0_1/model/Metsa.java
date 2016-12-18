@@ -23,13 +23,13 @@ public class Metsa implements Comparable<Metsa>{
 
     private HashMap<String, Note> notes;
     private HashMap<String, Receipt> receipts;
-
+    private HashMap<String, MapMarker> mapMarkers;
 
     public Metsa(){
 
     }
 
-    public Metsa(Date date, String description, String id, double latitude, double longitude, HashMap<String, Note> notes, HashMap<String, Receipt> receipts, int size, String title) {
+    public Metsa(Date date, String description, String id, double latitude, double longitude, HashMap<String, Note> notes, HashMap<String, Receipt> receipts,HashMap<String, MapMarker> mapMarkers, int size, String title) {
         this.date = date;
         this.description = description;
         this.id = id;
@@ -39,6 +39,7 @@ public class Metsa implements Comparable<Metsa>{
         this.receipts = receipts;
         this.size = size;
         this.title = title;
+        this.mapMarkers = mapMarkers;
     }
 
 
@@ -112,6 +113,14 @@ public class Metsa implements Comparable<Metsa>{
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public HashMap<String, MapMarker> getMapMarkers() {
+        return mapMarkers;
+    }
+
+    public void setMapMarkers(HashMap<String, MapMarker> mapMarkers) {
+        this.mapMarkers = mapMarkers;
     }
 
     @Override

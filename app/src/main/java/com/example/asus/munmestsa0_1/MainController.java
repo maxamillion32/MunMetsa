@@ -265,7 +265,7 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         if(noteText.getText().toString().length()>1){
 
             String key = FBreferences.get(currentMetsa.getId()).child("notes").push().getKey();
-            Note newNote = new Note(noteText.getText().toString(), new Date(), key, currentMetsa.getId(), "Default");
+            Note newNote = new Note(noteText.getText().toString(), new Date(), key, currentMetsa.getId(), localDB.getUsername());
 
             FBreferences.get(currentMetsa.getId()).child("notes").child(key).setValue(newNote);
             Toast.makeText(getApplicationContext(), "Merkintä lisätty.", Toast.LENGTH_LONG).show();
