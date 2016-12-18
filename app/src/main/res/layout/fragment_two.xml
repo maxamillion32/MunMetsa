@@ -34,21 +34,35 @@
 
 
     <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_gravity="bottom"
+        android:background="#98a688"
+        android:padding="2dp">
+
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom"
         android:layout_gravity="bottom"
-        android:background="#ffffff">
+        >
+
+        <TextView
+            android:text="Uusi merkintä:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/noteText"
-            android:hint="Kirjoita merkintä"
             android:layout_gravity="bottom" />
+    </LinearLayout>
 
 
 
@@ -57,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button3"
-            android:onClick="addNote" />
+            android:onClick="addNote"
+            android:padding="2dp" />
 
     </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.example.asus.munmestsa0_1;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -271,7 +273,9 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }else {
             Toast.makeText(getApplicationContext(), "Et voi lisätä alle 2 merkkiä pitkää merkintää.", Toast.LENGTH_LONG).show();
         }
-
+    }
+    public void deleteNote(String key){
+        FBreferences.get(currentMetsa.getId()).child("notes").child(key).removeValue();
     }
 
     public void addReceipt(View v){
@@ -290,6 +294,11 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
             receiptPrice.setText("");
             receiptTax.setText("24");
         }
+    }
+    public void deleteReceipt(String key){
+        FBreferences.get(currentMetsa.getId()).child("receipts").child(key).removeValue();
+        mStorage.child("Receipts").child(key).delete();
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -312,6 +321,43 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
                 }
             });
         }
+    }
+
+    public void noteClicked(View v){
+        final String id = ((TextView)v.findViewById(R.id.noteId)).getText().toString();
+        CharSequence choose[] = new CharSequence[] {"Poista"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Valitse toiminto");
+        builder.setItems(choose, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which==0){
+                    deleteNote(id);
+                    Toast.makeText(getApplicationContext(), id + " poistettu", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.show();
+    }
+    public void receiptClicked(View v){
+        final String id = ((TextView)v.findViewById(R.id.receiptId)).getText().toString();
+        CharSequence choose[] = new CharSequence[] {"Poista", "Katso kuittia"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Valitse toiminto");
+        builder.setItems(choose, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which==0){
+                    deleteReceipt(id);
+                    Toast.makeText(getApplicationContext(), id + " poistettu", Toast.LENGTH_LONG).show();
+                }else if(which==1){
+                    Intent intent = new Intent(getApplicationContext(), ReceiptImage.class);
+                    intent.putExtra("receiptId", id);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.show();
     }
 
 

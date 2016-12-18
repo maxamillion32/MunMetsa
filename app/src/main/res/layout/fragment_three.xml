@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context="com.example.asus.munmestsa0_1.fragments.ThreeFragment">
 
 
@@ -34,8 +35,21 @@
         android:layout_height="wrap_content"
         android:gravity="bottom"
         android:layout_gravity="bottom"
-        android:background="#ffffff">
+        android:background="#98a688"
+        android:padding="2dp">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_gravity="bottom"
+        >
+
+        <TextView
+            android:text="Selite:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -43,8 +57,8 @@
         android:inputType="textPersonName"
         android:ems="5"
         android:id="@+id/receiptText"
-        android:hint="Kirjoita merkintä"
         android:layout_gravity="bottom" />
+    </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -82,14 +96,16 @@
             android:layout_gravity="bottom"
             android:text="24" />
 
-        <Button
-            android:text="Ota kuva"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button3"
-            android:onClick="addReceipt" />
+
 
     </LinearLayout>
+        <Button
+            android:text="Ota kuva ja lähetä"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button3"
+            android:onClick="addReceipt"
+            android:padding="2dp" />
     </LinearLayout>
 
 

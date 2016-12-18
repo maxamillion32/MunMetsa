@@ -50,6 +50,7 @@
             android:label="@string/title_activity_metsa_add"
             android:screenOrientation="portrait" />
         <activity android:name=".Settings"></activity>
+        <activity android:name=".ReceiptImage"></activity>
     </application>
 
 </manifest>

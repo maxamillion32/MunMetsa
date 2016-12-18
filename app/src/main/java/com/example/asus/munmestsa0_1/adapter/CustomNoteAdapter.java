@@ -40,11 +40,14 @@ public class CustomNoteAdapter extends ArrayAdapter {
         TextView contentText = (TextView) customView.findViewById(R.id.noteTextView);
         TextView dateText = (TextView) customView.findViewById(R.id.noteDate);
         TextView senderText = (TextView) customView.findViewById(R.id.noteSender);
+        TextView idText = (TextView) customView.findViewById(R.id.noteId);
+
         String date = new SimpleDateFormat("dd-MM-yyyy").format(singleItem.getDate());
 
         contentText.setText(singleItem.getContent());
         dateText.setText(date);
         senderText.setText(singleItem.getPoster());
+        idText.setText(singleItem.getId());
         return customView;
     }
 }

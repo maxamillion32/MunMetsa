@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -51,14 +53,28 @@ public class CustomReceiptAdapter extends ArrayAdapter{
         TextView dateText = (TextView) customView.findViewById(R.id.receiptDateTextView);
         TextView priceText = (TextView) customView.findViewById(R.id.receiptPriceTextView);
         TextView taxText = (TextView) customView.findViewById(R.id.receiptTaxTextView);
+        TextView idText = (TextView) customView.findViewById(R.id.receiptId);
+        TextView taxAmountText = (TextView) customView.findViewById(R.id.receiptTaxAmountTextView);
+        TextView netAmountText = (TextView) customView.findViewById(R.id.receiptNetTextView);
+
 
 
         String date = new SimpleDateFormat("dd-MM-yyyy").format(singleItem.getDate());
 
         contentText.setText(singleItem.getDescription());
         dateText.setText(date);
-        priceText.setText(String.valueOf(singleItem.getPrice()));
         taxText.setText(String.valueOf(singleItem.getTaxRate()));
+        idText.setText(singleItem.getId());
+
+        double price = round(singleItem.getPrice(),2);
+        double tax = singleItem.getTaxRate();
+        double taxAmount = round(price*(tax/100),2);
+        double net = round(price-taxAmount,2);
+        taxAmountText.setText(String.valueOf(taxAmount));
+        priceText.setText(String.valueOf(price));
+
+
+        netAmountText.setText(String.valueOf(net));
 
         final ImageView imageView = (ImageView) customView.findViewById(R.id.showImage);
 
@@ -93,5 +109,12 @@ public class CustomReceiptAdapter extends ArrayAdapter{
 
 
         return customView;
+    }
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
