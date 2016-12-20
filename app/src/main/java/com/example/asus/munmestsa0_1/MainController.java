@@ -49,6 +49,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -61,6 +62,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,7 +90,6 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
     private ThreeFragment receiptFragment;
 
     private MapMarker tempMapMarker;
-    private EditText tempMapMarkerEditText;
     private boolean newMapMarkerOn;
 
     private String receiptKey;
@@ -118,10 +119,8 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         tempMapMarker = new MapMarker();
-        tempMapMarkerEditText = (EditText)findViewById(R.id.newMarkerText);
 
         newMapMarkerOn = false;
-
 
         metsaMap = new HashMap<>();
         currentMetsa = null;
@@ -182,6 +181,7 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
     //-------------------------------------------------------Basic--------------------------------------------------------
     public void refresh(){
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentMetsa.getLatitude(), currentMetsa.getLongitude()), 15));
+        viewMapMarkers();
         listItems();
         viewNotes();
         viewReceipts();
@@ -244,14 +244,31 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }
         mapFragment.getView().setLayoutParams(params);
     }
+    public void viewMapMarkers(){
+        mMap.clear();
+        if(currentMetsa.getMapMarkers()!=null) {
+            for (MapMarker m : currentMetsa.getMapMarkers().values()) {
+                MarkerOptions nm = new MarkerOptions();
+                nm.position(new LatLng(m.getLatitude(), m.getLongitude()))
+                        .title(m.getInfo() + " | " + new SimpleDateFormat("dd-MM-yyyy").format(m.getDate()))
+                        .snippet(m.getId())
+                        .draggable(true);
+                mMap.addMarker(nm);
+            }
+        }
+
+    }
     public void activateNewMapMarker(View v){
         if(newMapMarkerOn){
             showMap(1);
+            viewMapMarkers();
         }else{
+            mMap.clear();
             showMap(2);
             newMapMarkerOn = true;
         }
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -261,6 +278,7 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
         }
         mMap.setMyLocationEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             public void onMapClick(LatLng latLng) {
                 if(newMapMarkerOn) {
@@ -269,14 +287,57 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
                     tempMapMarker.setLongitude(latLng.longitude);
                     mMap.addMarker(new MarkerOptions().position(latLng));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
                 }
             }
         });
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                chooseMarkerOption(marker);
+                viewMapMarkers();
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
+
+    }
+    public void chooseMarkerOption(final Marker marker){
+        CharSequence choose[] = new CharSequence[] {"Poista"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Valitse toiminto");
+        builder.setItems(choose, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which==0){
+                    currentMetsa.getMapMarkers().remove(marker.getSnippet());
+                    FBreferences.get(currentMetsa.getId()).child("mapMarkers").child(marker.getSnippet()).removeValue();
+                    Toast.makeText(getApplicationContext(), marker.getSnippet() + " poistettu", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.show();
     }
 
-    public void addNewMarker(View v){
 
-        Toast.makeText(getApplicationContext(), " Toustia " + tempMapMarkerEditText.getText().toString(), Toast.LENGTH_LONG).show();
+    public void addNewMarker(View v){
+        EditText tempMapMarkerEditText = (EditText)findViewById(R.id.newMarkerText);
+        if(tempMapMarkerEditText.getText().toString().length()>1 && tempMapMarker != null) {
+            String key = FBreferences.get(currentMetsa.getId()).child("mapMarkers").push().getKey();
+            MapMarker newMapMarker = new MapMarker(key, currentMetsa.getId(), tempMapMarkerEditText.getText().toString(), tempMapMarker.getLatitude(), tempMapMarker.getLongitude(), new Date());
+            FBreferences.get(currentMetsa.getId()).child("mapMarkers").child(key).setValue(newMapMarker);
+            Toast.makeText(getApplicationContext(), "Merkintä lisätty!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "Valitse kartalta piste ja kirjoita merkintä kenttään" + tempMapMarkerEditText.getText().toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -401,15 +462,6 @@ public class MainController extends AppCompatActivity implements OnMapReadyCallb
             });
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 

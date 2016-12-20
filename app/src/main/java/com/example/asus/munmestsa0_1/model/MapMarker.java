@@ -8,6 +8,9 @@ import java.util.Date;
 
 public class MapMarker {
 
+    private String id;
+    private String metsaId;
+
     private double latitude;
     private double longitude;
 
@@ -18,11 +21,29 @@ public class MapMarker {
     public MapMarker() {
     }
 
-    public MapMarker(String info, double latitude, double longitude, Date date) {
+    public MapMarker(String id, String metsaId, String info, double latitude, double longitude, Date date) {
+        this.id= id;
+        this.metsaId = metsaId;
         this.info = info;
         this.latitude = latitude;
         this.longitude = longitude;
         this.date = date;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMetsaId() {
+        return metsaId;
+    }
+
+    public void setMetsaId(String metsaId) {
+        this.metsaId = metsaId;
     }
 
     public double getLatitude() {
