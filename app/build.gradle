@@ -4,6 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "23.0.3"
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.example.asus.munmestsa0_1"
         minSdkVersion 18
         targetSdkVersion 24

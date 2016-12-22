@@ -1,10 +1,14 @@
 package com.example.asus.munmestsa0_1;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+
+import java.io.File;
 
 /**
  * Created by Asus on 18.12.2016.
@@ -29,5 +33,17 @@ public class ReceiptImage extends AppCompatActivity {
 
         imageView.setImageDrawable(Drawable.createFromPath("sdcard/Pictures/"+extra));
 
+     /*   File imgFile = new File("sdcard/Pictures/"+extra);
+
+        if(imgFile.exists()){
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+            ImageView myImage = (ImageView) findViewById(R.id.bigReceiptImage);
+
+            myImage.setImageBitmap(myBitmap);
+
+        }
+*/
     }
 }
